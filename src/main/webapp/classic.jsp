@@ -34,7 +34,7 @@
     <hr>
     当前的时间是：
     <%--下面是使用表达式的例子--%>
-    <%=getDate()%>
+    <%=request.getRemoteAddr()%>
 </div>
 </body>
 </html>
