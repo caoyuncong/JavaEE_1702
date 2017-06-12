@@ -11,7 +11,8 @@
     <title>index page</title>
 </head>
 <body>
-<form action="login" method="post">
+<form action="user" method="post">
+    <input type="hidden" name="action" value="login">
     <input type="text" name="mobile" placeholder="手机号"><br>
     <input type="password" name="password" placeholder="密码"><br>
     <input type="submit" value="登录">

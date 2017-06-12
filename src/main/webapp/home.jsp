@@ -27,6 +27,14 @@
 %>
 <%=pageContext.getAttribute("key")%>
 <%=application.getAttribute("app-key")%>
-<p><a href="logout">注销</a></p>
+<p><a href="user?action=logout">注销</a></p>
+<hr>
+<form action="student" method="post">
+    <input type="hidden" name="action" value="add">
+    <input type="text" name="name" placeholder="姓名">
+    <input type="text" name="gender" placeholder="性别">
+    <input type="date" name="dob" placeholder="出生日期">
+    <input type="submit" value="添加">
+</form>
 </body>
 </html>

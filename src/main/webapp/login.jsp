@@ -29,7 +29,7 @@
 
     if (resultSet.next()) {
         // success
-//        response.sendRedirect("home.jsp"); // 不能保存request 范围内的属性
+//        response.sendRedirect("home.jsp"); // 不能保存request 范围内的属性,可以保存session范围内属性
         session.setAttribute("nick",resultSet.getString("nick"));
         request.getRequestDispatcher("home.jsp").forward(request,response); // 可以保存
     } else {
