@@ -1,32 +1,38 @@
 <%--
   Created by IntelliJ IDEA.
   User: Administrator
-  Date: 2017/6/6
-  Time: 11:02
+  Date: 2017/6/7
+  Time: 14:27
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>index page</title>
+    <title>Title</title>
 </head>
 <body>
-<form action="user" method="post">
-    <input type="hidden" name="action" value="login">
-    <input type="text" name="mobile" placeholder="手机号"><br>
-    <input type="password" name="password" placeholder="密码"><br>
-    <input type="submit" value="登录">
-</form>
-<%--<p><%=(request.getAttribute("message") != null) ? request.getAttribute("message") : ""%>--%>
-<%--</p>--%>
-<p>
-    <%
-        String message = (String) request.getAttribute("message");
-        if (message != null) {
-            out.print(message);
-        }
-    %>
+<%
+    if (session.getAttribute("nick") == null) {
+        response.sendRedirect("default.jsp");
+    }
+%>
+<h1>主页</h1>
+<p><%=session.getAttribute("nick")%>
 </p>
-<a href="signup.jsp">注册</a>
+
+<%
+    pageContext.setAttribute("key", "value");
+    application.setAttribute("app-key", "app-value");
+%>
+
+<p><a href="user?action=logout">注销</a></p>
+<hr>
+<form action="student" method="post">
+    <input type="hidden" name="action" value="add">
+    <input type="text" name="name" placeholder="姓名">
+    <input type="text" name="gender" placeholder="性别">
+    <input type="date" name="dob" placeholder="出生日期">
+    <input type="submit" value="添加">
+</form>
 </body>
 </html>

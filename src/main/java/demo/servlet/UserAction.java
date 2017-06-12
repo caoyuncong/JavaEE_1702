@@ -1,64 +1,46 @@
 package demo.servlet;
 
-import com.mysql.jdbc.Driver;
 import demo.util.Db;
-
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.*;
-import java.util.Arrays;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Created by caoyuncong on
  * 2017/6/12 9:29
  * JavaEE_1702.
  */
+@WebServlet(urlPatterns = "/user")
 public class UserAction extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
 
-        if (action == null) {
-            req.setAttribute("message", "出现了一点问题");
-            req.getRequestDispatcher("index.jsp").forward(req, resp);
+        if ("register".equals(action)) { // action.equals NPE
+            register(req, resp); // -- ?
+            return;
+        }
+        if ("login".equals(action)) {
+            login(req, resp);
+            return;
+        }
+        if ("logout".equals(action)) {
+            logout(req, resp);
             return;
         }
 
-        switch (action) {
-            case "register":
-                register(req, resp);
-                break;
-            case "login":
-                login(req, resp);
-                break;
-            case "logout":
-                logout(req, resp);
-                break;
-            default:
-                break;
-        }
-
-//        if ("register".equals(action)) { // action.equals NPE
-//            register(req, resp);
-//            return;
-//        }
-//        if ("login".equals(action)) {
-//            login(req, resp);
-//            return;
-//        }
-//        if ("logout".equals(action)) {
-//            logout(req, resp);
-//            return;
-//        }
-//
-//        req.setAttribute("message","出现了一点问题。。。");
-//        req.getRequestDispatcher("index.jsp").forward(req, resp);
+        req.setAttribute("message", "出现了一点问题。。。");
+        req.getRequestDispatcher("default.jsp").forward(req, resp);
     }
 
-    protected void register(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void register(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String nick = req.getParameter("nick").trim();
         String mobile = req.getParameter("mobile").trim();
         String password = req.getParameter("password");
@@ -67,9 +49,6 @@ public class UserAction extends HttpServlet {
             req.setAttribute("message", "昵称或手机号或密码不为0");
             req.getRequestDispatcher("signup.jsp").forward(req, resp);
         }
-
-        String[] hobbies = req.getParameterValues("hobbies");
-        String[] cities = req.getParameterValues("cities");
 
         Connection connection = Db.getConnection();
         PreparedStatement preparedStatement = null;
@@ -103,10 +82,8 @@ public class UserAction extends HttpServlet {
                 preparedStatement.setString(1, nick);
                 preparedStatement.setString(2, mobile);
                 preparedStatement.setString(3, password);
-                preparedStatement.setString(4, Arrays.toString(hobbies));
-                preparedStatement.setString(5, Arrays.toString(cities));
-                preparedStatement.executeUpdate();
-                resp.sendRedirect("index.jsp");
+                preparedStatement.executeUpdate(); // ---?
+                resp.sendRedirect("default.jsp");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,7 +92,7 @@ public class UserAction extends HttpServlet {
         }
     }
 
-    protected void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String mobile = req.getParameter("mobile");
         String password = req.getParameter("password");
 
@@ -128,7 +105,7 @@ public class UserAction extends HttpServlet {
                 preparedStatement = connection.prepareStatement(sql);
             } else {
                 req.setAttribute("message", "出现了一点情况。。");
-                req.getRequestDispatcher("index.jsp").forward(req, resp);
+                req.getRequestDispatcher("default.jsp").forward(req, resp);
                 return;
             }
             preparedStatement.setString(1, mobile);
@@ -136,25 +113,25 @@ public class UserAction extends HttpServlet {
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 req.getSession().setAttribute("nick", resultSet.getString("nick"));
-                resp.sendRedirect("home.jsp");
+                resp.sendRedirect("index.jsp");
             } else {
-                req.setAttribute("message", "出现了一点情况。。。");
+                req.setAttribute("message", "手机号或密码错误。。。");
+                req.getRequestDispatcher("default.jsp").forward(req, resp);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            Db.close(resultSet, preparedStatement, connection);
         }
     }
 
     protected void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        req.getSession().invalidate();
+        resp.sendRedirect("default.jsp");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String action = req.getParameter("action");
-        if (action.equals("logout")) {
-            req.getSession().invalidate();
-            resp.sendRedirect("index.jsp");
-        }
+        doPost(req, resp);
     }
 }

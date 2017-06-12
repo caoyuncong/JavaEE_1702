@@ -34,7 +34,7 @@ public class LoginServlet extends HttpServlet {
                 statement = connection.prepareStatement(sql);
             }else {
                 req.setAttribute("message", "出现了一点情况。。。");
-                req.getRequestDispatcher("index.jsp").forward(req, resp);
+                req.getRequestDispatcher("default.jsp").forward(req, resp);
                 return; // 返回类型void 退出 doPost() 方法
             }
             statement.setString(1, mobile);
@@ -42,11 +42,11 @@ public class LoginServlet extends HttpServlet {
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 req.getSession().setAttribute("nick", resultSet.getString("nick"));
-//                req.getRequestDispatcher("home.jsp").forward(req, resp);
-                resp.sendRedirect("home.jsp"); // 重定向可以保存session范围内数据
+//                req.getRequestDispatcher("index.jsp").forward(req, resp);
+                resp.sendRedirect("index.jsp"); // 重定向可以保存session范围内数据
             }else {
                 req.setAttribute("message", "用户名或密码错误");
-                req.getRequestDispatcher("index.jsp").forward(req, resp);
+                req.getRequestDispatcher("default.jsp").forward(req, resp);
             }
         } catch (SQLException e) {
             e.printStackTrace();
