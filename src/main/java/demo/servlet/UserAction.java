@@ -58,6 +58,8 @@ public class UserAction extends HttpServlet {
             if (connection != null) {
                 preparedStatement = connection.prepareStatement(sqlNick);
             } else {
+                req.setAttribute("message", "Error.");
+                req.getRequestDispatcher("index.jsp").forward(req, resp);
                 return;
             }
             preparedStatement.setString(1, nick);
@@ -72,12 +74,12 @@ public class UserAction extends HttpServlet {
 
             if (isNickExist) {
                 req.setAttribute("message", "昵称已经存在");
-                req.getRequestDispatcher("signup.jsp");
+                req.getRequestDispatcher("signup.jsp").forward(req,resp);
             } else if (isMobileExist) {
                 req.setAttribute("message", "手机号已经存在");
-                req.getRequestDispatcher("signup.jsp");
+                req.getRequestDispatcher("signup.jsp").forward(req,resp);
             } else {
-                String sql = "INSERT INTO db_javaee.user VALUE (NULL ,?,?,?,?,?)";
+                String sql = "INSERT INTO db_javaee.user VALUE (NULL ,?,?,?)";
                 preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setString(1, nick);
                 preparedStatement.setString(2, mobile);
@@ -113,7 +115,7 @@ public class UserAction extends HttpServlet {
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 req.getSession().setAttribute("nick", resultSet.getString("nick"));
-                resp.sendRedirect("index.jsp");
+                resp.sendRedirect("student?action=queryAll"); // ***
             } else {
                 req.setAttribute("message", "手机号或密码错误。。。");
                 req.getRequestDispatcher("default.jsp").forward(req, resp);
@@ -125,7 +127,7 @@ public class UserAction extends HttpServlet {
         }
     }
 
-    protected void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getSession().invalidate();
         resp.sendRedirect("default.jsp");
     }

@@ -1,3 +1,6 @@
+<%@ page import="demo.model.Student" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.sql.ResultSet" %>
 <%--
   Created by IntelliJ IDEA.
   User: Administrator
@@ -9,6 +12,11 @@
 <html>
 <head>
     <title>Title</title>
+    <script>
+        function del() {
+            return confirm('DEL?');
+        }
+    </script>
 </head>
 <body>
 <%
@@ -29,10 +37,34 @@
 <hr>
 <form action="student" method="post">
     <input type="hidden" name="action" value="add">
-    <input type="text" name="name" placeholder="姓名">
-    <input type="text" name="gender" placeholder="性别">
-    <input type="date" name="dob" placeholder="出生日期">
+    <input type="text" name="name" placeholder="姓名"><br>
+    <input type="text" name="gender" placeholder="性别"><br>
+    <input type="date" name="dob" placeholder="出生日期"><br>
     <input type="submit" value="添加">
 </form>
+<hr>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>姓名</th>
+        <th>性别</th>
+        <th>出生日期</th>
+        <th colspan="2">操作</th>
+    </tr>
+    <%
+        List<Student> resultSet = (List<Student>) session.getAttribute("students");
+        for (Student student : resultSet) {
+            out.print("<tr>" + "<td>" + student.getId() + "</td>" + "<td>" + student.getName() + "</td>" + "<td>" + student.getGender() + "</td>" + "<td>" + student.getDob() + "</td>" + "<td><a href='student?action=queryById&id=" + student.getId() + "'>编辑</a></td>" + "<td><a href='student?action=remove&id=" + student.getId() + "' onclick='return del()'>删除</a></td>" + "</tr>");
+        }
+
+    %>
+</table>
+<hr>
+<%
+    String message = (String) request.getAttribute("message");
+    if (message != null) {
+        out.print(message);
+    }
+%>
 </body>
 </html>

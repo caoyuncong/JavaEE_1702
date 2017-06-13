@@ -14,7 +14,6 @@ CREATE TABLE db_javaee.user (
 )
   COMMENT '用户表';
 
-
 DROP TABLE IF EXISTS db_javaee.student;
 CREATE TABLE db_javaee.student (
   id     INT AUTO_INCREMENT PRIMARY KEY
@@ -31,6 +30,8 @@ CREATE TABLE db_javaee.student (
 
 SELECT *
 FROM db_javaee.user;
+
+TRUNCATE TABLE db_javaee.user;
 
 SELECT *
 FROM db_javaee.student;
