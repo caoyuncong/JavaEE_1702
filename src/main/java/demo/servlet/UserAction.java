@@ -1,6 +1,8 @@
 package demo.servlet;
 
 import demo.util.Db;
+import demo.util.Error;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -106,8 +108,7 @@ public class UserAction extends HttpServlet {
             if (connection != null) {
                 preparedStatement = connection.prepareStatement(sql);
             } else {
-                req.setAttribute("message", "出现了一点情况。。");
-                req.getRequestDispatcher("default.jsp").forward(req, resp);
+                Error.showErrorMessage(req,resp);
                 return;
             }
             preparedStatement.setString(1, mobile);
